@@ -1,4 +1,3 @@
-/* auto-generated (do not modify): type=TEXT creator=KAHL hex=544558544B41484C000000000000000000000000000000000000000000000000 */
 //=============================================================================
 //
 // TidyMenus INIT & cdev by Steve Crutchfield ©2020-2023.
@@ -106,8 +105,8 @@
 
 #include "TidyMenus.h"
 #include "Utilities.h"
-#include "::CrutchUtilities ƒ:CrutchUtilities.h"
-#include "::CrutchUtilities ƒ:CrutchSettings.h"
+#include "CrutchUtilities.h"
+#include "CrutchSettings.h"
 
 #define _SetItemMark _SetItmMark  // 'Traps.h' spells it _SetItmMark
 

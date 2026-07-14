@@ -1,4 +1,4 @@
-#include "::CrutchUtilities ƒ:CrutchError.h"
+#include "CrutchError.h"
 
 #include "TidyMenus.h"
 #include "Utilities.h"

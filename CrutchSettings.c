@@ -1,4 +1,3 @@
-/* auto-generated (do not modify): type=TEXT creator=KAHL hex=544558544B41484C000000000000000000000000000000000000000000000000 */
 //==================================================================================
 // CrutchSettings.c
 // ©2023 Steve Crutchfield
@@ -32,8 +31,8 @@
 // **** next file is specific to each project that uses CrutchSettings.h: ****
 #include "Settings.h"
 
-#include "::CrutchUtilities ƒ:CrutchError.h"
-#include "::CrutchUtilities ƒ:CrutchSettings.h"
+#include "CrutchError.h"
+#include "CrutchSettings.h"
 
 // global settings variable
 Settings **gSettings;

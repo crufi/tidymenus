@@ -1,3 +1,4 @@
+/* auto-generated (do not modify): type=TEXT creator=KAHL hex=544558544B41484C000000000000000000000000000000000000000000000000 */
 #pragma once
 
 #define SETTINGS_GESTALT_SELECTOR  	'NLbl'

@@ -1,4 +1,3 @@
-/* auto-generated (do not modify): type=TEXT creator=KAHL hex=544558544B41484C000000000000000000000000000000000000000000000000 */
 //=============================================================================
 //
 // TidyMenus cdev by Steve Crutchfield ©2020-2023.
