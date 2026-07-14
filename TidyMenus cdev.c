@@ -1,3 +1,4 @@
+/* auto-generated (do not modify): type=TEXT creator=KAHL hex=544558544B41484C000000000000000000000000000000000000000000000000 */
 //=============================================================================
 //
 // TidyMenus cdev by Steve Crutchfield ©2020-2023.
@@ -14,12 +15,12 @@
 
 #include "TidyMenus.h"
 #include "Utilities.h"
-#include "::CrutchUtilities [f]:CrutchError.h"
-#include "::CrutchUtilities [f]:CrutchSettings.h"
+#include "::CrutchUtilities ƒ:CrutchError.h"
+#include "::CrutchUtilities ƒ:CrutchSettings.h"
 
 // gestalt selectors
 
-#define kCdevGestaltSelector	'NoLÂ'
+#define kCdevGestaltSelector	'NoLå'
 
 // function prototypes
 
@@ -111,14 +112,14 @@ void NoLabelCdev::UpdateInfoBox(Boolean justCheckedNoLabel)
 	if (installedState == kNotInstalled)
 	{
 		if (justCheckedNoLabel && (**gSettings).noLabel)
-			SetIText(infoBox, "\pThe Label menu is hidden; install and restart to move it a submenu under ``File''.");
+			SetIText(infoBox, "\pThe Label menu is hidden; install and restart to move it a submenu under “File”.");
 		else
 			SetIText(infoBox, "\pChanges take effect instantly.\rInstall and restart to hide the Help menu.");
 	}
 	else
 	{
 		if (justCheckedNoLabel && (**gSettings).noLabel)
-			SetIText(infoBox, "\pThe Label menu is available in a submenu under the Finder's ``File'' menu.");
+			SetIText(infoBox, "\pThe Label menu is available in a submenu under the Finder’s “File” menu.");
 		else
 			SetIText(infoBox, "\pChanges take effect instantly.\rNo restart required.");
 	}
@@ -149,7 +150,7 @@ void NoLabelCdev::Init(void)
 			installedState = kJustInstalled;
 		else
 			ComplainSprintf(
-					 "Couldn't do on-the-fly install (error #%d):  drag " APP_NAME " to "
+					 "Couldn’t do on-the-fly install (error #%d):  drag " APP_NAME " to "
 					 "the System Folder and restart for a full install.  Until then, "
 					 "you can hide the Label menu, but Help menu hiding may not work "
 					 "correctly.",
@@ -158,7 +159,7 @@ void NoLabelCdev::Init(void)
 #else
 		MessageBoxSprintf(
 		         APP_NAME " is not currently installed:  you can still hide/show the "
-		         "Finder's Label menu, but to hide the Help menu (and to move the Label "
+		         "Finder’s Label menu, but to hide the Help menu (and to move the Label "
 		         "menu to a submenu while hidden), please install "
 		         "by dragging to the System Folder and restart.");
 #endif
@@ -245,7 +246,7 @@ void NoLabelCdev::Init(void)
 		else
 		{
 			// we are installed, update checkboxes accordingly
-			SetCTitle(noLabelCheckBox, "\pHide Label menu under ``File''");
+			SetCTitle(noLabelCheckBox, "\pHide Label menu under “File”");
 			SetCtlValue(noHelpCheckBox,  (**gSettings).noHelp != 0);
 		}
 		

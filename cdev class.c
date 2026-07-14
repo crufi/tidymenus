@@ -1,3 +1,4 @@
+/* auto-generated (do not modify): type=TEXT creator=KAHL hex=544558544B41484C000000000000000000000000000000000000000000000000 */
 /*
  *  cdev class.c - standard cdev object
  *
@@ -7,8 +8,8 @@
 
 #include "cdev.h"
 
-#include "::CrutchUtilities [f]:CrutchError.h"
-#include "::CrutchUtilities [f]:CrutchSettings.h"
+#include "::CrutchUtilities ƒ:CrutchError.h"
+#include "::CrutchUtilities ƒ:CrutchSettings.h"
 
 pascal long _main(short, short, short, short, EventRecord *, cdev *, WindowPeek);
 

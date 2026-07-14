@@ -1,3 +1,4 @@
+/* auto-generated (do not modify): type=TEXT creator=KAHL hex=544558544B41484C000000000000000000000000000000000000000000000000 */
 //=============================================================================
 //
 // TidyMenus INIT & cdev by Steve Crutchfield ©2020-2023.
@@ -105,8 +106,8 @@
 
 #include "TidyMenus.h"
 #include "Utilities.h"
-#include "::CrutchUtilities [f]:CrutchUtilities.h"
-#include "::CrutchUtilities [f]:CrutchSettings.h"
+#include "::CrutchUtilities ƒ:CrutchUtilities.h"
+#include "::CrutchUtilities ƒ:CrutchSettings.h"
 
 #define _SetItemMark _SetItmMark  // 'Traps.h' spells it _SetItmMark
 
@@ -194,7 +195,7 @@ pascal OSErr MoveLabelMenuInOrOutOfFileMenuGestalt(OSType selector, const long *
 	gOrigLabelMenu = GetMHandle(kLabelMenuID);  // might be in hier list
 	
 	AssertMesgReturn(gFileMenu && gOrigLabelMenu,
-		"Couldn't find the original File and/or Label menus -- unsupported system version?",
+		"Couldn't find the original File and/or Label menus — unsupported system version?",
 		gestaltUnknownErr);
 
 	if (selector == kHideLabelMenuSelector 

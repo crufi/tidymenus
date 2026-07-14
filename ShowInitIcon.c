@@ -3,8 +3,8 @@
 // View in Geneva 9pt, 4-space tabs
 
 // Written by: Peter N Lewis <peter@mail.peter.com.au>, Jim Walker <JWWalker@aol.com>
-// and FranÁois Pottier <pottier@dmi.ens.fr>, with thanks to previous ShowINIT authors.
-// Send comments and bug reports to FranÁois Pottier.
+// and François Pottier <pottier@dmi.ens.fr>, with thanks to previous ShowINIT authors.
+// Send comments and bug reports to François Pottier.
 
 // This version features:
 // - Short and readable code.

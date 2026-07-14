@@ -3,7 +3,7 @@
 # never overwrites an existing Makefile). See tools/mac-forks/README.md
 # for what snow.mk/release.mk each give you.
 
-SNOW_WORKSPACE ?= $(HOME)/Snow/your-workspace.snoww   # point this at your own workspace
+SNOW_WORKSPACE ?= $(HOME)/Snow/iix.snoww
 TEXT_CREATOR   := KAHL                                # or whatever your vintage toolchain expects
 VOLUME_LABEL   := TidyMenus                           # HFS volume name shown in the emulator -- spaces/apostrophes fine
 

@@ -12,5 +12,5 @@
 Handle SystemMenuList : 0x286;
 
 // Shoe/hide label menu Gestalt selectors (for cdev to call INIT code)
-#define kHideLabelMenuSelector	'-LÂb'
-#define kShowLabelMenuSelector	'+LÂb'
+#define kHideLabelMenuSelector	'-Låb'
+#define kShowLabelMenuSelector	'+Låb'

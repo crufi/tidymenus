@@ -43,7 +43,7 @@ short EllipsifyString(const short leftEdge, const short rightEdge, Str255 s)
 	short w;
 	
 	while (leftEdge + (w = StringWidth(s)) > rightEdge && s[0] > 2)
-		s[--s[0]] = '...';  // truncate final 2 chars, add ellipsis
+		s[--s[0]] = '…';  // truncate final 2 chars, add ellipsis
 	
 	return w;
 }
@@ -958,7 +958,7 @@ void InitManagers(ProcPtr resumeProc)
 // ========== Hide/ShowMenuBar
 
 // These are simple versions from Knaster, Macintosh Programming Secrets (2e0,
-// p. 492ff.  I did much more elaborate versions for ExposÈ, see that code for details.
+// p. 492ff.  I did much more elaborate versions for Exposé, see that code for details.
 
 void HideMenuBar(HideMenuBarData *data, Boolean allowClicks)
 // data:  a pointer to a place to store things we should remember,
