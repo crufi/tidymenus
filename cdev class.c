@@ -7,8 +7,8 @@
 
 #include "cdev.h"
 
-#include "::CrutchUtilities ƒ:CrutchError.h"
-#include "::CrutchUtilities ƒ:CrutchSettings.h"
+#include "CrutchError.h"
+#include "CrutchSettings.h"
 
 pascal long _main(short, short, short, short, EventRecord *, cdev *, WindowPeek);
 
