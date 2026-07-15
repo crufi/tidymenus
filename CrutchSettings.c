@@ -137,13 +137,13 @@ Boolean LoadSettingsFromGestalt(void)
 	
 	gSettings = NULL;
 
-	if (Gestalt(SETTINGS_GESTALT_SELECTOR, (long *) &settings) == noErr)  // Gestalt worked
+	if (Gestalt(SETTINGS_GESTALT_SELECTOR, (long *) &settings) == noErr  // Gestalt worked
+		&& AssertMesg(settings != NULL, 
+				"Gestalt gave us a null settings handle"))
 	{
 		const Size sz = GetHandleSize((Handle) settings);
 
-		if(    AssertMesg(settings != NULL, 
-					"Gestalt gave us a null settings handle")
-			&& AssertMesg(sz >= 0, 
+		if(    AssertMesg(sz >= 0, 
 					"Gestalt gave us a settings handle that caused an error in GetHandleSize")
 			&& AssertMesg(sz > 0, 
 					"Gestalt gave us a zero-length settings handle")
@@ -209,6 +209,9 @@ void SaveSettings(void)
 	RmveResource(res);	
 	AssertMesgReturn(ResError() == noErr, 
 		"couldn't remove old settings resource to update it", );
+
+	if (res != (Handle) gSettings)	// (equal when settings were loaded from this very
+		DisposeHandle(res);			// resource; else dispose the on-disk copy we loaded)
 		
 	AddResource((Handle) gSettings, SETTINGS_RES_TYPE, SETTINGS_RES_ID, "\p");
 	AssertMesgReturn(ResError() == noErr,

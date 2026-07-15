@@ -41,7 +41,7 @@
 //   after the regular menus (followed by the app's hierarchical menus at the 
 //   end).  Of course, each application has its own MenuList.
 //
-// - The "calc" routine in the standard MBDF automaticallty adds the system
+// - The "calc" routine in the standard MBDF automatically adds the system
 //   menus to the (regular) MenuList if (1) there is an Apple menu in the MenuList
 //   and (2) there aren't any system menus yet (identified as such by large negative
 //   menu IDs < -16384).
@@ -108,6 +108,9 @@
 #include "CrutchUtilities.h"
 #include "CrutchSettings.h"
 
+STATIC_ASSERT(sizeof(Settings) % 2 == 0);  // CrutchSettings' GetHandleSize check
+                                           // relies on an even struct size
+
 #define _SetItemMark _SetItmMark  // 'Traps.h' spells it _SetItmMark
 
 DECLARE_PATCH(	InsertMenu,  	 void, 		 (MenuHandle theMenu, short beforeID));
@@ -127,6 +130,7 @@ DECLARE_PATCH(  MenuSelect,      long,       (Point));
 
 #define kGoodIcon					-4064
 #define kXOutIcon					-4063
+#define kShowInitIconCodeID			-4048
 
 MenuHandle 	gOurLabelMenu;  // if NULL, next 3 globals are not valid
 MenuHandle	gFileMenu;
@@ -160,8 +164,6 @@ short GetLabelSubmenuItemNumberInFileMenu()
 	
 	AssertMesgReturn(gOurLabelMenu != NULL, "Our Label submenu isn't installed", 0);
 	
-	i = CountMItems(gFileMenu);
-
 	for (i = CountMItems(gFileMenu); i > 0; i--)
 	{
 		short mark;
@@ -190,6 +192,14 @@ pascal OSErr MoveLabelMenuInOrOutOfFileMenuGestalt(OSType selector, const long *
 {
 	SetUpA4();
 
+	if (!EqualStr(CurApName, FinderName))
+	{
+		// Gestalt-enumerating utilities (TattleTech etc.) invoke every installed
+		// selector -- quietly do nothing unless the Finder's menus are in context:
+		RestoreA4();
+		return gestaltUnknownErr;
+	}
+
 	gFileMenu      = GetMHandle(kFileMenuID);
 	gOrigLabelMenu = GetMHandle(kLabelMenuID);  // might be in hier list
 	
@@ -210,8 +220,10 @@ pascal OSErr MoveLabelMenuInOrOutOfFileMenuGestalt(OSType selector, const long *
 
 		int newLabelMenuID = kMaxHierMenuID;
 		int numItems;
+		MenuHandle menuCopy;
+		Boolean savedWeCalledInsertMenu;
 		
-		gOurLabelMenu = gOrigLabelMenu;
+		menuCopy = gOrigLabelMenu;
 					
 		while (GetMHandle(newLabelMenuID))		// find an unused hier menu ID
 			--newLabelMenuID;
@@ -219,24 +231,31 @@ pascal OSErr MoveLabelMenuInOrOutOfFileMenuGestalt(OSType selector, const long *
 		if (!Assert(newLabelMenuID >= 128))		// couldn't find a menu ID???
 			goto done;
 		
-		if (!Check(HandToHand((Handle *) &gOurLabelMenu)))  // copy the menu
+		if (!Check(HandToHand((Handle *) &menuCopy)))  // copy the menu
 			goto done;
 			
+		gOurLabelMenu = menuCopy;	// (only set now that the copy has succeeded, so
+									// failure paths above leave gOurLabelMenu NULL)
+
 		(**gOurLabelMenu).menuID = newLabelMenuID;  // change ID of copy to our hier ID
 
-		(**gSettings).weCalledInsertMenu = true;		
+		savedWeCalledInsertMenu = (**gSettings).weCalledInsertMenu;
+		(**gSettings).weCalledInsertMenu = true;
 		InsertMenu(gOurLabelMenu, hierMenu);		// add copy to hier menu list
-		(**gSettings).weCalledInsertMenu = false;
+		(**gSettings).weCalledInsertMenu = savedWeCalledInsertMenu;  // (restore -- the
+										// cdev may have this set around its Gestalt call)
 		
 		// add a divider then our hier Label menu to end of File menu:
 		
 		AppendMenu(gFileMenu, "\p(-");
-		
-		HLock((Handle) gOurLabelMenu);
-		AppendMenu(gFileMenu, (**gOurLabelMenu).menuData);  // use orig Label menu title
-		HUnlock((Handle) gOurLabelMenu);
+		AppendMenu(gFileMenu, "\px");	// placeholder -- real title set below, since
+										// AppendMenu would interpret metacharacters
 
 		numItems = CountMItems(gFileMenu);
+
+		HLock((Handle) gOurLabelMenu);
+		SetItem(gFileMenu, numItems, (**gOurLabelMenu).menuData);  // use orig Label menu title
+		HUnlock((Handle) gOurLabelMenu);
 
 		SetItemMark(gFileMenu, numItems, newLabelMenuID);
 		SetItemCmd (gFileMenu, numItems, hMenuCmd);
@@ -395,7 +414,9 @@ pascal long PatchedMenuSelect(Point p)
 		// our Label submenu under the Finder's file menu, swap in the original Label
 		// menu's menuID in the result and return:
 		
-		if (gOurLabelMenu)  // may have just been set above!
+		if (gOurLabelMenu					// may have just been set above!
+			&& EqualStr(CurApName, FinderName))	// (gOurLabelMenu lives in the Finder's
+												// heap -- it's stale if the Finder quit)
 		{
 			result = CALL_ORIG_TRAP(MenuSelect) (p);
 	
@@ -621,7 +642,6 @@ pascal MenuHandle PatchedGetMHandle(short menuID)
 
 pascal void PatchedInsertMenu(MenuHandle theMenu, short beforeID)
 {
-	int i;
 	const short menuID = (**theMenu).menuID;
 
 	SetUpA4();
@@ -752,7 +772,6 @@ void main()
 	Boolean good = false;
 	Ptr 	initPtr;
 	Handle 	initHndl;
-	Handle 	showIconCode;
 	
 	asm { move.l a0, initPtr }  // get pointer to ourselves
 	
@@ -765,8 +784,6 @@ void main()
 		Notify("\p" APP_NAME " requires System 7.0 or higher.");
 	else if (AssertMesg(LoadSettingsFromResource(), "couldn't get settings resource"))
 	{
-		long result;
-		
 		initHndl = RecoverHandle(initPtr);  // get handle to ourselves
 		
 		// (we set Locked bit in "Set Project Type..." so don't need HLock here)
@@ -814,18 +831,18 @@ void main()
 			
 			good = true;
 		}
+		else
+			(**gSettings).noLabel = false;	// fail safe:  the InsertMenu patch is live
+											// but the submenu machinery didn't install
 	}
 
 	if (BOOT_TIME)  // only show icon at boot time, not if the cdev is running us later
 	{
-		// call ShowInitIcon code:
-		if (Assert(showIconCode = Get1Resource('Code', -4048)))
-		{
-			if (good)
-				CallShowInitIcon(showIconCode, kGoodIcon);
-			else
-				CallShowInitIconXedOut(showIconCode, kGoodIcon, kXOutIcon);
-		}
+		// call ShowInitIcon code resource (it loads 'Code' kShowInitIconCodeID itself):
+		if (good)
+			Assert(CallShowInitIcon(kShowInitIconCodeID, kGoodIcon));
+		else
+			Assert(CallShowInitIconXedOut(kShowInitIconCodeID, kGoodIcon, kXOutIcon));
 	}
 
 	RestoreA4();

@@ -14,8 +14,8 @@
 
 #include "TidyMenus.h"
 #include "Utilities.h"
-#include "::CrutchUtilities ƒ:CrutchError.h"
-#include "::CrutchUtilities ƒ:CrutchSettings.h"
+#include "CrutchError.h"
+#include "CrutchSettings.h"
 
 // gestalt selectors
 
@@ -59,7 +59,7 @@ Boolean Runnable(void)
 // should cdev appear in the control panel?  (implements the 'macDev' message)
 // this only gets called if the 'mach' -4064 resource is 0000 FFFF
 {
-	return SystemVersion() > 0x0700;
+	return SystemVersion() >= 0x0700;
 }
 
 cdev *New(void)
@@ -87,16 +87,23 @@ static void InstallCdevGestalt(void)
 		0x4ED0      // jmp      (a0)        ; return
 	};
 
-	const Ptr ptrToGestaltFuncInSysHeap = NewPtrSys(sizeof dummyFunction);
-	BlockMove(dummyFunction, ptrToGestaltFuncInSysHeap, sizeof dummyFunction);
+	Ptr ptrToGestaltFuncInSysHeap;
 
 	AssertMesgReturn(TrapAvailable(_NewGestalt),
 					 "Gestalt Manager not available", 
 					 );
 
-	AssertMesgReturn(noErr == NewGestalt(kCdevGestaltSelector, ptrToGestaltFuncInSysHeap),
-					 "couldn't install Gestalt selector (possible duplicate?)", 
+	AssertMesgReturn((ptrToGestaltFuncInSysHeap = NewPtrSys(sizeof dummyFunction)) != NULL,
+					 "couldn't allocate a Gestalt selector function in the system heap", 
 					 );
+
+	BlockMove(dummyFunction, ptrToGestaltFuncInSysHeap, sizeof dummyFunction);
+
+	if (!AssertMesg(noErr == NewGestalt(kCdevGestaltSelector, ptrToGestaltFuncInSysHeap),
+					"couldn't install Gestalt selector (possible duplicate?)"))
+	{
+		DisposePtr(ptrToGestaltFuncInSysHeap);  // (don't leak the function on failure)
+	}
 }
 
 static Boolean CdevGestaltIsRunning(void)
@@ -111,7 +118,7 @@ void NoLabelCdev::UpdateInfoBox(Boolean justCheckedNoLabel)
 	if (installedState == kNotInstalled)
 	{
 		if (justCheckedNoLabel && (**gSettings).noLabel)
-			SetIText(infoBox, "\pThe Label menu is hidden; install and restart to move it a submenu under “File”.");
+			SetIText(infoBox, "\pThe Label menu is hidden; install and restart to move it to a submenu under “File”.");
 		else
 			SetIText(infoBox, "\pChanges take effect instantly.\rInstall and restart to hide the Help menu.");
 	}
@@ -211,9 +218,6 @@ void NoLabelCdev::Init(void)
 	// set up dialog items:
 	
 	{
-		Rect r;
-		short itemType;
-			
 		GetDItemHandle(dp, itmNoLabelCheckBox, &noLabelCheckBox);
 		GetDItemHandle(dp, itmNoHelpCheckBox,  &noHelpCheckBox);
 		GetDItemHandle(dp, itmInfoBox,         &infoBox);
