@@ -60,3 +60,52 @@ finderinfo_field() {
     done
     printf '%s' "$out"
 }
+
+# hfspath REPO_PATH -- convert a repo-relative path to an HFS path:
+# each component UTF-8 -> Mac Roman, '/' separators -> ':'. HFS treats
+# '/' as an ordinary filename character (its separator is ':'), so a
+# repo path passed through unconverted lands on the volume as a single
+# file literally named "old/foo.c" instead of foo.c inside a folder.
+# (The one repo path this can't represent: a filename containing a
+# literal ':', which macOS's POSIX layer technically allows -- it would
+# read as a folder separator on the HFS side. Don't do that.)
+hfspath() {
+    printf '%s' "$1" | LC_ALL=C iconv -f UTF-8 -t MACINTOSH | LC_ALL=C tr '/' ':'
+}
+
+# hfsmkdirs REPO_PATH -- ensure the HFS folder chain for a repo path's
+# directory part exists on the currently hmount'ed volume, one level at
+# a time (hmkdir can't create intermediate folders in one call).
+# "already exists" errors are expected and suppressed.
+hfsmkdirs() {
+    _rel=$1
+    _acc=
+    while :; do
+        case "$_rel" in
+            */*) _comp=${_rel%%/*}; _rel=${_rel#*/} ;;
+            *) break ;;
+        esac
+        _acc="$_acc:$(printf '%s' "$_comp" | LC_ALL=C iconv -f UTF-8 -t MACINTOSH)"
+        hmkdir "$_acc" 2>/dev/null || true
+    done
+}
+
+# to_mactext -- stdin (text in any shape) -> stdout as Mac Roman + CR.
+# Shape-aware: valid-UTF-8 input (a modern editor rewrote the file --
+# VS Code has no bare-CR support and re-encodes on save) gets the full
+# conversion; anything else is assumed already Mac Roman and only has
+# its line breaks normalized. Every break style (CRLF, LF, lone CR)
+# becomes exactly one CR, so a genuine Mac Roman/CR file passes through
+# byte-identical. A UTF-8 character with no Mac Roman equivalent makes
+# iconv fail loudly rather than guess.
+to_mactext() {
+    _tm=$(mktemp)
+    cat >"$_tm"
+    if iconv -f UTF-8 -t UTF-8 <"$_tm" >/dev/null 2>&1; then
+        _tm2=$(mktemp)
+        iconv -f UTF-8 -t MACINTOSH <"$_tm" >"$_tm2" || { rm -f "$_tm" "$_tm2"; return 1; }
+        mv "$_tm2" "$_tm"
+    fi
+    perl -0777 -pe 's/\r\n?|\n/\r/g' <"$_tm"
+    rm -f "$_tm"
+}
