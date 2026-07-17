@@ -1,6 +1,6 @@
 # TidyMenus
 
-I'm happy to share TidyMenus, a simple little Control Panel for System 7 and 8 that can:
+A simple little Control Panel for System 7 and 8 that can:
 
 - Hide/Show the **Help menu** in all applications
 - **Re-show the Help menu across all applications at any time**, just by opening the
