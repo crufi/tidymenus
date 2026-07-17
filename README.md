@@ -1,6 +1,6 @@
-# TidyMenus (a.k.a. NoLabel 2.0)
+# TidyMenus
 
-I'm happy to share TidyMenus, a simple little Control Panel for System 7 and 8 that can:
+A simple little Control Panel for System 7 and 8 that can:
 
 - Hide/Show the **Help menu** in all applications
 - **Re-show the Help menu across all applications at any time**, just by opening the
@@ -21,10 +21,11 @@ Ready-to-use downloads live at
 **[Macintosh Garden](https://macintoshgarden.org/apps/tidymenus)**; discussion at
 [68kmla](https://68kmla.org/bb/index.php?threads/presenting-tidymenus.45619/).
 
-When I first posted this, I promised the commented source code would be released "in
-the fullness of time, whenever I figure out GitHub and a nice way to tie vintage 68k
-THINK C projects to it." The fullness of time has arrived — this repo is that source
-code, and the "nice way" is here too (see [Building](#building-it) below).
+When I first posted this (as a sequel to my original NoLabel INIT), I promised the 
+commented source code would be released "in the fullness of time, whenever I figure 
+out GitHub and a nice way to tie vintage 68k THINK C projects to it." The fullness of 
+time has arrived — this repo is that source code, and the "nice way" is here too 
+(see [Building](#building-it) below).
 
 Pro tip: the 'L' or 'H'/'?' keys in the Control Panel are shortcuts for the
 "Hide Label menu" and "Hide Help menu" checkboxes, respectively.
