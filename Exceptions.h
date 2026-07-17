@@ -60,6 +60,7 @@
 
 #include <setjmp.h>
 
+// a linked list of active try blocks, each of which lives on the stack:
 typedef struct TryBlock {
 	jmp_buf buf;
 	struct TryBlock *next;
@@ -92,7 +93,8 @@ enum { _in_try_catch = false };
 							enum { _in_try_catch = KIND, _in_try_block = false, _in_catch_all = false }; \
 							TryBlock _node;  /* lives on the stack, alive thru end_try */ \
 							bool _caught = false; \
-							_PushTry(&_node);
+							_node.next = _try_stack; \
+							_try_stack = &_node;
 
 #define ABOUT_TO_START_CATCH_BLOCK \
 								STATIC_ASSERT_EXPR_DISCARD(_in_try_catch && !_in_catch_all); \
@@ -109,7 +111,7 @@ enum { _in_try_catch = false };
 
 #define catch_all 				ABOUT_TO_START_CATCH_BLOCK \
 								STATIC_ASSERT_EXPR_DISCARD(_in_try_catch == REGULAR_TRY); \
-							}} else { /* don't need to set _caught here; never applies in a regular 'try' block */\
+							}} else { /* don't need to set _caught here; never applies in a regular 'try' block */ \
 								enum { _in_catch_all = true }; \
 								START_CATCH_BLOCK(0) {
 
@@ -152,7 +154,6 @@ enum { _in_try_catch = false };
 // used when declaring a fcn that can throw
 #define CAN_THROW 		_throws_t _can_throw_here
 
-void _PushTry(TryBlock *node);
 void _PopTry(TryBlock *node);
 void _DoThrow(int x);
 

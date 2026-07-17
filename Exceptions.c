@@ -35,12 +35,6 @@ void _DoThrow(int x) {
 	longjmp(node->buf, x);
 }
 
-// pushes a (stack-resident) node onto _try_stack; cannot fail
-void _PushTry(TryBlock *node) {
-	node->next = _try_stack;
-	_try_stack = node;
-}
-
 // pops the given node off _try_stack
 void _PopTry(TryBlock *node) {
 	AssertMesgFatal(_try_stack, "empty try_stack -- 'end_try' without 'try'?");
