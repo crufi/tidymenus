@@ -15,6 +15,8 @@ I'm happy to share TidyMenus, a simple little Control Panel for System 7 and 8 t
   the box without installing anything or restarting (though of course you'll want to
   install this if you want to keep the Label menu hidden permanently)
 
+![TinyMenus in action](docs/demo.gif)
+
 Ready-to-use downloads live at
 **[Macintosh Garden](https://macintoshgarden.org/apps/tidymenus)**; discussion at
 [68kmla](https://68kmla.org/bb/index.php?threads/presenting-tidymenus.45619/).
